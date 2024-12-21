@@ -2,69 +2,94 @@
 
 // Factory function to create a Todo object
 const Todo = (title, description, dueDate, priority, notes = '', checklist = []) => {
-    // Private variable to track completion status
-    let completed = false;
-  
-    // Method to toggle the completion status
-    const toggleComplete = () => {
-      completed = !completed;
-    };
-  
-    // Return the public API of the Todo object
-    return {
-      title,
-      description,
-      dueDate,
-      priority,
-      notes,
-      checklist,
-      completed,
-      toggleComplete,
-    };
+  let completed = false;
+
+  const toggleComplete = () => {
+    completed = !completed;
   };
-  
-  // Factory function to create a Project object
-  const Project = (name) => {
-    // Array to hold all todos associated with this project
-    const todos = [];
-  
-    // Method to add a new todo to the project
-    const addTodo = (todo) => {
-      todos.push(todo);
-    };
-  
-    // Method to remove a todo by its index
-    const removeTodo = (index) => {
-      todos.splice(index, 1);
-    };
-  
-    // Return the public API of the Project object
-    return {
-      name,
-      todos,
-      addTodo,
-      removeTodo,
-    };
+
+  return {
+    title,
+    description,
+    dueDate,
+    priority,
+    notes,
+    checklist,
+    completed,
+    toggleComplete,
   };
-  
-  // Module to manage all projects
-  const ProjectManager = (() => {
-    // Initialize with a default project
-    const projects = [Project('Default')];
-  
-    // Method to get all projects
-    const getProjects = () => projects;
-  
-    // Method to add a new project
-    const addProject = (name) => projects.push(Project(name));
-  
-    // Method to get a specific project by its index
-    const getProject = (index) => projects[index];
-  
-    // Return the public API of the ProjectManager module
-    return { getProjects, addProject, getProject };
-  })();
-  
-  // Export the Todo, Project, and ProjectManager for use in other files
-  export { Todo, Project, ProjectManager };
-  
+};
+
+// Factory function to create a Project object
+const Project = (name) => {
+  const todos = [];
+
+  const addTodo = (todo) => {
+    todos.push(todo);
+  };
+
+  const removeTodo = (index) => {
+    todos.splice(index, 1);
+  };
+
+  return {
+    name,
+    todos,
+    addTodo,
+    removeTodo,
+  };
+};
+
+// Module to manage all projects
+const ProjectManager = (() => {
+  let projects = [];
+
+  // Load projects from localStorage
+  const loadProjects = () => {
+    const data = localStorage.getItem('projects');
+    if (!data) {
+      projects = [Project('Default')]; // Create a default project if no data exists
+    } else {
+      const parsedProjects = JSON.parse(data);
+      projects = parsedProjects.map((project) => {
+        const restoredProject = Project(project.name);
+        project.todos.forEach((todo) => {
+          const restoredTodo = Todo(
+            todo.title,
+            todo.description,
+            todo.dueDate,
+            todo.priority,
+            todo.notes,
+            todo.checklist
+          );
+          if (todo.completed) restoredTodo.toggleComplete();
+          restoredProject.addTodo(restoredTodo);
+        });
+        return restoredProject;
+      });
+    }
+  };
+
+  // Save projects to localStorage
+  const saveProjects = () => {
+    const data = JSON.stringify(projects);
+    localStorage.setItem('projects', data);
+  };
+
+  const getProjects = () => projects;
+
+  const addProject = (name) => {
+    projects.push(Project(name));
+    saveProjects(); // Save after adding a project
+  };
+
+  const getProject = (index) => projects[index];
+
+  const save = () => saveProjects(); // Expose save function for external use
+
+  loadProjects(); // Automatically load projects when the app initializes
+
+  return { getProjects, addProject, getProject, save };
+})();
+
+export { Todo, Project, ProjectManager };

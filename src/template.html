@@ -11,16 +11,31 @@
     <!-- Sidebar for project list -->
     <div id="project-list">
       <h2>Projects</h2>
+      <!-- Add new project form -->
+      <form id="add-project-form">
+        <input type="text" id="project-name" placeholder="New Project Name" required />
+        <button type="submit">Add Project</button>
+      </form>
     </div>
 
     <!-- Main section for todos -->
     <div id="todo-list">
       <h2>Todos</h2>
+      <!-- Add new todo form -->
+      <form id="add-todo-form">
+        <input type="text" id="todo-title" placeholder="Todo Title" required />
+        <input type="date" id="todo-due-date" required />
+        <select id="todo-priority">
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <button type="submit">Add Todo</button>
+      </form>
+      <!-- Container for displaying todos -->
+      <div id="todos-container"></div>
     </div>
   </div>
-
-  <!-- Button to add a new todo -->
-  <button id="add-todo">Add Todo</button>
 
   <script src="bundle.js"></script>
 </body>

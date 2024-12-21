@@ -5,11 +5,13 @@ const UI = (() => {
   // Render the list of projects in the sidebar
   const renderProjects = (projects) => {
     const projectList = document.getElementById('project-list');
-    projectList.textContent = ''; // Clear the current project list
+    const form = document.getElementById('add-project-form'); // Preserve the form
+    projectList.innerHTML = ''; // Clear the current project list
+    projectList.appendChild(form); // Re-append the form
 
     projects.forEach((project, index) => {
       const projectItem = document.createElement('div');
-      projectItem.textContent = project.name; // Set project name
+      projectItem.textContent = project.name;
       projectItem.dataset.index = index; // Store the project index
       projectItem.classList.add('project-item');
       projectList.appendChild(projectItem);
@@ -18,8 +20,8 @@ const UI = (() => {
 
   // Render the list of todos for a selected project
   const renderTodos = (todos) => {
-    const todoList = document.getElementById('todo-list');
-    todoList.textContent = ''; // Clear the current todo list
+    const todoContainer = document.getElementById('todos-container');
+    todoContainer.innerHTML = ''; // Clear the current todo list
 
     todos.forEach((todo, index) => {
       // Create the container for a single todo
@@ -45,8 +47,8 @@ const UI = (() => {
       deleteButton.classList.add('delete-todo');
       todoItem.appendChild(deleteButton);
 
-      // Append the todo item to the list
-      todoList.appendChild(todoItem);
+      // Append the todo item to the container
+      todoContainer.appendChild(todoItem);
     });
   };
 
